@@ -11,7 +11,8 @@ function Junk(filepath, name){
   this.filepath = filepath;
   this.name = name;
   Junk.allJunk.push(this);
-  this.counter = 0;
+  this.shows = 0;
+  this.clicks = 0;
 }
 
 // create instances of Junk
@@ -42,6 +43,7 @@ function randomJunk1() {
   imgEl.addEventListener('click', randomJunk1);
   var randomIndex = Math.floor(Math.random() * Junk.allJunk.length);
   imgEl.src = Junk.allJunk[randomIndex].filepath;
+  Junk.allJunk[randomIndex].shows++;
   flag = true;
   imgEl.addEventListener('click', clickCounter);
   imgEl.addEventListener('click', refresh);
@@ -54,6 +56,7 @@ function randomJunk2() {
   imgEl.addEventListener('click', randomJunk2);
   var randomIndex = Math.floor(Math.random() * Junk.allJunk.length);
   imgEl.src = Junk.allJunk[randomIndex].filepath;
+  Junk.allJunk[randomIndex].shows++;
   flag = true;
   imgEl.addEventListener('click', clickCounter);
   imgEl.addEventListener('click', refresh);
@@ -66,6 +69,7 @@ function randomJunk3() {
   imgEl.addEventListener('click', randomJunk3);
   var randomIndex = Math.floor(Math.random() * Junk.allJunk.length);
   imgEl.src = Junk.allJunk[randomIndex].filepath;
+  Junk.allJunk[randomIndex].shows++;
   flag = true;
   imgEl.addEventListener('click', clickCounter);
   imgEl.addEventListener('click', refresh);
