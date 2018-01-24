@@ -1,7 +1,7 @@
 'use strict';
 
+//creates the prompt when the user initially visits the page
 var userName = 0;
-
 function getUserName() {
   userName = prompt('Thank you for participating in our study! Please enter your name');
   console.log(userName);
@@ -11,18 +11,21 @@ function getUserName() {
   }
 }
 
+//variables that have data pushed to them
 Junk.allJunk = [];
 Junk.totalClicks = 0;
 Junk.lastShown = [];
 
+//retrieves elements from the main document(index.html)
 var sectionEl = document.getElementById('junk-pics');
 var junkResults = document.getElementById('junk-results');
 
-//arrays to store chart elements
+//arrays to store chart variables
 var junkNames = [];
 var junkClicks = [];
 var junkViews = [];
 
+// constructor function
 function Junk(filepath, name) {
   this.filepath = filepath;
   this.name = name;
@@ -32,6 +35,7 @@ function Junk(filepath, name) {
   junkNames.push(this.name);
 }
 
+//object instances of the constructor
 new Junk('images/bag.jpg', 'bag');
 new Junk('images/banana.jpg', 'banana');
 new Junk('images/bathroom.jpg', 'bathroom');
@@ -53,22 +57,31 @@ new Junk('images/usb.gif', 'usb');
 new Junk('images/water-can.jpg', 'water-can');
 new Junk('images/wine-glass.jpg', 'wine-glass');
 
+//assigns variables to image elements from the main page (index.html)
 var leftEl = document.getElementById('left');
 var centerEl = document.getElementById('center');
 var rightEl = document.getElementById('right');
 
+// determines what 3 random photos will appear on the site
 function randomJunk() {
+  //random number generators
   var randomLeft = Math.floor(Math.random() * Junk.allJunk.length);
   var randomCenter = Math.floor(Math.random() * Junk.allJunk.length);
   var randomRight = Math.floor(Math.random() * Junk.allJunk.length);
 
-  while(randomLeft === randomRight || randomLeft === randomCenter || randomCenter === randomRight || Junk.lastShown.includes(randomLeft) || Junk.lastShown.includes(randomCenter) || Junk.lastShown.includes(randomRight)) {
+  //ensures photos are not the same as each other or previous photos
+  while(randomLeft === randomRight
+    || randomLeft === randomCenter
+    || randomCenter === randomRight
+    || Junk.lastShown.includes(randomLeft)
+    || Junk.lastShown.includes(randomCenter)
+    || Junk.lastShown.includes(randomRight)) {
     console.log ('DOUBLES!');
     randomLeft = Math.floor(Math.random() * Junk.allJunk.length);
     randomCenter = Math.floor(Math.random() * Junk.allJunk.length);
     randomRight = Math.floor(Math.random() * Junk.allJunk.length);
   }
-
+  //assigns randomly generated instance filepath to src attribute and name to alt attribute
   leftEl.src = Junk.allJunk[randomLeft].filepath;
   leftEl.alt = Junk.allJunk[randomLeft].name;
 
@@ -78,15 +91,18 @@ function randomJunk() {
   rightEl.src = Junk.allJunk[randomRight].filepath;
   rightEl.alt = Junk.allJunk[randomRight].name;
 
+  //adds to number of times an image is shown to related property
   Junk.allJunk[randomLeft].shows++;
   Junk.allJunk[randomCenter].shows++;
   Junk.allJunk[randomRight].shows++;
 
+  //generates an array to log which images are currently being shown
   Junk.lastShown[0] = randomLeft;
   Junk.lastShown[1] = randomCenter;
   Junk.lastShown[2] = randomRight;
 }
 
+//generates an event that registers number of clicks and displays table and chart when limit is hit
 function handleClicks(e) {
   Junk.totalClicks++;
   console.log(e.target.alt);
@@ -109,6 +125,7 @@ function handleClicks(e) {
   }
 }
 
+// removes 3 images after 25 clicks
 function removePhotos() {
   leftEl.src = null;
   leftEl.alt = '';
@@ -118,8 +135,10 @@ function removePhotos() {
   rightEl.alt = '';
 }
 
+//renders a table with survey results in addition to the chart
 function showResults() {
-  junkResults.textContent = userName + '\'s Results';
+  var h2El = document.getElementById("table-header");
+  h2El.textContent = userName + '\'s Results';
 
   var trEl = document.createElement('tr');
   var thEl = document.createElement('th');
@@ -159,18 +178,21 @@ function showResults() {
   junkResults.appendChild(trEl);
 }
 
+// adds to total number of clicks per item
 function updateClicks () {
   for(var i in Junk.allJunk) {
     junkClicks[i] = Junk.allJunk[i].clicks;
   }
 }
 
+// adds to the total number of times each iten is displayed
 function updateShows () {
   for(var i in Junk.allJunk) {
     junkViews[i] = Junk.allJunk[i].shows;
   }
 }
 
+//renders a chart that is displayed after 25 clicks, uses library 'chartJS'
 function createChart () {
   var context = document.getElementById('results-chart').getContext('2d');
 
@@ -204,6 +226,7 @@ function createChart () {
     }
   };
 
+  //linter errors exist because referencing 'chartJS' library
   var junkChart = new Chart(context, {
     type: 'bar',
     data: junkData,
@@ -212,7 +235,9 @@ function createChart () {
   document.getElementById('results-chart').style.backgroundColor = 'white';
 }
 
+//event listener to recognize validated clicks on images
 sectionEl.addEventListener('click', handleClicks);
 
+//renders name prompt and initial 3 images on page load
 getUserName();
 randomJunk();
