@@ -1,18 +1,38 @@
 'use strict';
 
+var userName = 0;
+
+function getUserName() {
+  userName = prompt('Thank you for participating in our study! Please enter your name');
+  console.log(userName);
+  if(userName === '') {
+    userName = 'AAAHHHH!!!!!';
+    console.log('NO NAME GIVEN');
+  }
+}
+
 // array to store all Junk instances
 Junk.allJunk = [];
-var totalClicks = parseInt(0);
-var studyOutput = document.getElementById('studyOutput');
-var flag = false;
+
+//keep track of all clicks
+Junk.totalClicks = 0;
+
+//track previously displayed junk
+Junk.lastShown = [];
+
+//access the section element from the DOM
+var sectionEl = document.getElementById('junk-pics');
+
+//access ul element from DOM
+var ulEl = document.getElementById('junk-results');
 
 // make a constructor for Junk objects
-function Junk(filepath, name){
+function Junk(filepath, name) {
   this.filepath = filepath;
   this.name = name;
-  Junk.allJunk.push(this);
   this.shows = 0;
   this.clicks = 0;
+  Junk.allJunk.push(this);
 }
 
 // create instances of Junk
@@ -37,85 +57,73 @@ new Junk('images/usb.gif', 'usb');
 new Junk('images/water-can.jpg', 'water-can');
 new Junk('images/wine-glass.jpg', 'wine-glass');
 
-// callback function for event listener to randomly display a goat image
-function randomJunk1() {
-  var imgEl = document.getElementById('junk-pic-1');
-  imgEl.addEventListener('click', randomJunk1);
-  var randomIndex = Math.floor(Math.random() * Junk.allJunk.length);
-  imgEl.src = Junk.allJunk[randomIndex].filepath;
-  Junk.allJunk[randomIndex].shows++;
-  flag = true;
-  imgEl.addEventListener('click', clickCounter);
-  imgEl.addEventListener('click', refresh);
+//assign elements to IDs
+var leftEl = document.getElementById('left');
+var centerEl = document.getElementById('center');
+var rightEl = document.getElementById('right');
 
-  console.log(Junk.allJunk[randomIndex].name);
+//randomly display a picture
+function randomJunk() {
+  var randomLeft = Math.floor(Math.random() * Junk.allJunk.length);
+  var randomCenter = Math.floor(Math.random() * Junk.allJunk.length);
+  var randomRight = Math.floor(Math.random() * Junk.allJunk.length);
+
+  while(randomLeft === randomRight || randomLeft === randomCenter || randomCenter === randomRight || Junk.lastShown.includes(randomLeft) || Junk.lastShown.includes(randomCenter) || Junk.lastShown.includes(randomRight)) {
+    console.log ('DOUBLES!');
+    randomLeft = Math.floor(Math.random() * Junk.allJunk.length);
+    randomCenter = Math.floor(Math.random() * Junk.allJunk.length);
+    randomRight = Math.floor(Math.random() * Junk.allJunk.length);
+  }
+
+  leftEl.src = Junk.allJunk[randomLeft].filepath;
+  leftEl.alt = Junk.allJunk[randomLeft].name;
+
+  centerEl.src = Junk.allJunk[randomCenter].filepath;
+  centerEl.alt = Junk.allJunk[randomCenter].name;
+
+  rightEl.src = Junk.allJunk[randomRight].filepath;
+  rightEl.alt = Junk.allJunk[randomRight].name;
+
+  Junk.allJunk[randomLeft].shows++;
+  Junk.allJunk[randomCenter].shows++;
+  Junk.allJunk[randomRight].shows++;
+
+  Junk.lastShown[0] = randomLeft;
+  Junk.lastShown[1] = randomCenter;
+  Junk.lastShown[2] = randomRight;
 }
 
-function randomJunk2() {
-  var imgEl = document.getElementById('junk-pic-2');
-  imgEl.addEventListener('click', randomJunk2);
-  var randomIndex = Math.floor(Math.random() * Junk.allJunk.length);
-  imgEl.src = Junk.allJunk[randomIndex].filepath;
-  Junk.allJunk[randomIndex].shows++;
-  flag = true;
-  imgEl.addEventListener('click', clickCounter);
-  imgEl.addEventListener('click', refresh);
+// define handleClicks function
+function handleClicks(e) {
+  Junk.totalClicks++;
+  console.log(e.target.alt);
 
-  console.log(Junk.allJunk[randomIndex].name);
-}
-
-function randomJunk3() {
-  var imgEl = document.getElementById('junk-pic-3');
-  imgEl.addEventListener('click', randomJunk3);
-  var randomIndex = Math.floor(Math.random() * Junk.allJunk.length);
-  imgEl.src = Junk.allJunk[randomIndex].filepath;
-  Junk.allJunk[randomIndex].shows++;
-  flag = true;
-  imgEl.addEventListener('click', clickCounter);
-  imgEl.addEventListener('click', refresh);
-
-  console.log(Junk.allJunk[randomIndex].name);
-}
-
-// imgEl.addEventListener('click', clickCounter);
-
-function clickCounter() {
-  if (flag === true) {
-    totalClicks++;
-    flag = false;
-    console.log('Total Clicks= ' + totalClicks);
+  for(var i in Junk.allJunk) {
+    if(e.target.alt === Junk.allJunk[i].name) {
+      Junk.allJunk[i].clicks++;
+    }
+  }
+  if(Junk.totalClicks > 24) {
+    sectionEl.removeEventListener('click', handleClicks);
+    alert('Thanks for your help, ' + userName + '! Click Ok to see your results');
+    showResults();
+  } else {
+    randomJunk();
   }
 }
 
-function tableRender() {
-  var trEl = document.createElement('tr');
-  var tdEl = document.createElement('td');
-  tdEl.textContent = this.name;
-  trEl.appendChild(tdEl);
-
+//display results
+function showResults() {
+  ulEl.textContent = userName + '\'s Results';
   for (var i in Junk.allJunk) {
-    tdEl = document.createElement('td');
-    tdEl.textContent = this.counter[i];
-    trEl.appendChild(tdEl);
+    var liEl = document.createElement('li');
+    liEl.textContent = Junk.allJunk[i].name + ', shown: ' + Junk.allJunk[i].shows + ', clicked: ' + Junk.allJunk[i].clicks;
+    ulEl.appendChild(liEl);
   }
-  tdEl = document.createElement('td');
-  tdEl.textContent = totalClicks;
-  trEl.appendChild(tdEl);
-
-  studyOutput.appendChild(trEl);
 }
 
-if (totalClicks === 3) {
-  tableRender();
-}
+sectionEl.addEventListener('click', handleClicks);
 
-function refresh() {
-  randomJunk1();
-  randomJunk2();
-  randomJunk3();
-}
-
-// invoke the callback on page load to show a random baby goat
-randomJunk1();
-randomJunk2();
-randomJunk3();
+//render 3 images on page load
+getUserName();
+randomJunk();
