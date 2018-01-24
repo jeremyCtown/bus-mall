@@ -16,7 +16,7 @@ Junk.totalClicks = 0;
 Junk.lastShown = [];
 
 var sectionEl = document.getElementById('junk-pics');
-var ulEl = document.getElementById('junk-results');
+var junkResults = document.getElementById('junk-results');
 
 //arrays to store chart elements
 var junkNames = [];
@@ -96,25 +96,67 @@ function handleClicks(e) {
       Junk.allJunk[i].clicks++;
     }
   }
-  if(Junk.totalClicks > 5) {
+  if(Junk.totalClicks > 24) {
     sectionEl.removeEventListener('click', handleClicks);
+    removePhotos();
     alert('Thanks for your help, ' + userName + '! Click Ok to see your results');
-    showResults();
     updateClicks();
     updateShows();
+    showResults();
     createChart();
   } else {
     randomJunk();
   }
 }
 
+function removePhotos() {
+  leftEl.src = null;
+  leftEl.alt = '';
+  centerEl.src = null;
+  centerEl.alt = '';
+  rightEl.src = null;
+  rightEl.alt = '';
+}
+
 function showResults() {
-  ulEl.textContent = userName + '\'s Results';
+  junkResults.textContent = userName + '\'s Results';
+
+  var trEl = document.createElement('tr');
+  var thEl = document.createElement('th');
+  thEl.textContent = 'Item';
+  trEl.appendChild(thEl);
+
   for (var i in Junk.allJunk) {
-    var liEl = document.createElement('li');
-    liEl.textContent = Junk.allJunk[i].name + ', shown: ' + Junk.allJunk[i].shows + ', clicked: ' + Junk.allJunk[i].clicks;
-    ulEl.appendChild(liEl);
+    thEl = document.createElement('th');
+    thEl.textContent = Junk.allJunk[i].name;
+    trEl.appendChild(thEl);
   }
+
+  junkResults.appendChild(trEl);
+
+  trEl = document.createElement('tr');
+  var tdEl = document.createElement('td');
+  tdEl.textContent = 'Views';
+  trEl.appendChild(tdEl);
+  for (i in Junk.allJunk) {
+    tdEl = document.createElement('td');
+    tdEl.textContent = Junk.allJunk[i].shows;
+    trEl.appendChild(tdEl);
+  }
+
+  junkResults.appendChild(trEl);
+
+  trEl = document.createElement('tr');
+  tdEl = document.createElement('td');
+  tdEl.textContent = 'Clicks';
+  trEl.appendChild(tdEl);
+  for (i in Junk.allJunk) {
+    tdEl = document.createElement('td');
+    tdEl.textContent = Junk.allJunk[i].clicks;
+    trEl.appendChild(tdEl);
+  }
+
+  junkResults.appendChild(trEl);
 }
 
 function updateClicks () {
@@ -131,7 +173,7 @@ function updateShows () {
 
 function createChart () {
   var context = document.getElementById('results-chart').getContext('2d');
- 
+
   var junkVotes = {
     label: 'Clicks per Item',
     data: junkClicks,
@@ -167,6 +209,7 @@ function createChart () {
     data: junkData,
     options: chartOptions
   });
+  document.getElementById('results-chart').style.backgroundColor = 'white';
 }
 
 sectionEl.addEventListener('click', handleClicks);
