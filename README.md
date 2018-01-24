@@ -1,1 +1,21 @@
-# bus-mall
+# Project 3: Bus Mall
+
+## Overview
+
+The purpose of this project is to design a consumer survey that randomizes different potential product offerings and allows the participant to make 25 selections while being presented three options at a time.
+
+Future iterations of this project should incorporate "none of the above" as an option, and should do a second stage of selections, this time involving only the top rated options to drill further down into which products could be potential goldmines.
+
+It should be noted that the individual response does not matter as much as the aggregate from a statistically significant sample size.
+
+## Daily Progress
+
+### Day 1
+Day 1 really sucked, and did not make much headway towards achieving the goals. Initial efforts on user statements were generated and images were resized, randomization progress was halted by the inability to render results.
+
+### Day 2
+Day 2 went much better, and the site is now a fully functioning MVP. Results are recorded and displayed in a table and in a bar graph, with images being removed from the page once results are available. Attempts to move results to a second page did not work.
+
+## Resources
+
+Table with multiple datasets: https://codepen.io/Shokeen/pen/NpgbKg

@@ -11,31 +11,27 @@ function getUserName() {
   }
 }
 
-// array to store all Junk instances
 Junk.allJunk = [];
-
-//keep track of all clicks
 Junk.totalClicks = 0;
-
-//track previously displayed junk
 Junk.lastShown = [];
 
-//access the section element from the DOM
 var sectionEl = document.getElementById('junk-pics');
+var junkResults = document.getElementById('junk-results');
 
-//access ul element from DOM
-var ulEl = document.getElementById('junk-results');
+//arrays to store chart elements
+var junkNames = [];
+var junkClicks = [];
+var junkViews = [];
 
-// make a constructor for Junk objects
 function Junk(filepath, name) {
   this.filepath = filepath;
   this.name = name;
   this.shows = 0;
   this.clicks = 0;
   Junk.allJunk.push(this);
+  junkNames.push(this.name);
 }
 
-// create instances of Junk
 new Junk('images/bag.jpg', 'bag');
 new Junk('images/banana.jpg', 'banana');
 new Junk('images/bathroom.jpg', 'bathroom');
@@ -57,12 +53,10 @@ new Junk('images/usb.gif', 'usb');
 new Junk('images/water-can.jpg', 'water-can');
 new Junk('images/wine-glass.jpg', 'wine-glass');
 
-//assign elements to IDs
 var leftEl = document.getElementById('left');
 var centerEl = document.getElementById('center');
 var rightEl = document.getElementById('right');
 
-//randomly display a picture
 function randomJunk() {
   var randomLeft = Math.floor(Math.random() * Junk.allJunk.length);
   var randomCenter = Math.floor(Math.random() * Junk.allJunk.length);
@@ -93,7 +87,6 @@ function randomJunk() {
   Junk.lastShown[2] = randomRight;
 }
 
-// define handleClicks function
 function handleClicks(e) {
   Junk.totalClicks++;
   console.log(e.target.alt);
@@ -105,25 +98,121 @@ function handleClicks(e) {
   }
   if(Junk.totalClicks > 24) {
     sectionEl.removeEventListener('click', handleClicks);
+    removePhotos();
     alert('Thanks for your help, ' + userName + '! Click Ok to see your results');
+    updateClicks();
+    updateShows();
     showResults();
+    createChart();
   } else {
     randomJunk();
   }
 }
 
-//display results
+function removePhotos() {
+  leftEl.src = null;
+  leftEl.alt = '';
+  centerEl.src = null;
+  centerEl.alt = '';
+  rightEl.src = null;
+  rightEl.alt = '';
+}
+
 function showResults() {
-  ulEl.textContent = userName + '\'s Results';
+  junkResults.textContent = userName + '\'s Results';
+
+  var trEl = document.createElement('tr');
+  var thEl = document.createElement('th');
+  thEl.textContent = 'Item';
+  trEl.appendChild(thEl);
+
   for (var i in Junk.allJunk) {
-    var liEl = document.createElement('li');
-    liEl.textContent = Junk.allJunk[i].name + ', shown: ' + Junk.allJunk[i].shows + ', clicked: ' + Junk.allJunk[i].clicks;
-    ulEl.appendChild(liEl);
+    thEl = document.createElement('th');
+    thEl.textContent = Junk.allJunk[i].name;
+    trEl.appendChild(thEl);
   }
+
+  junkResults.appendChild(trEl);
+
+  trEl = document.createElement('tr');
+  var tdEl = document.createElement('td');
+  tdEl.textContent = 'Views';
+  trEl.appendChild(tdEl);
+  for (i in Junk.allJunk) {
+    tdEl = document.createElement('td');
+    tdEl.textContent = Junk.allJunk[i].shows;
+    trEl.appendChild(tdEl);
+  }
+
+  junkResults.appendChild(trEl);
+
+  trEl = document.createElement('tr');
+  tdEl = document.createElement('td');
+  tdEl.textContent = 'Clicks';
+  trEl.appendChild(tdEl);
+  for (i in Junk.allJunk) {
+    tdEl = document.createElement('td');
+    tdEl.textContent = Junk.allJunk[i].clicks;
+    trEl.appendChild(tdEl);
+  }
+
+  junkResults.appendChild(trEl);
+}
+
+function updateClicks () {
+  for(var i in Junk.allJunk) {
+    junkClicks[i] = Junk.allJunk[i].clicks;
+  }
+}
+
+function updateShows () {
+  for(var i in Junk.allJunk) {
+    junkViews[i] = Junk.allJunk[i].shows;
+  }
+}
+
+function createChart () {
+  var context = document.getElementById('results-chart').getContext('2d');
+
+  var junkVotes = {
+    label: 'Clicks per Item',
+    data: junkClicks,
+    backgroundColor: 'rgba(0, 99, 132, 0.6)',
+    borderWidth: 0
+  };
+
+  var junkShows = {
+    label: 'Views per Item',
+    data: junkViews,
+    backgroundColor: 'rgba(99, 132, 0, 0.6)',
+    borderWidth: 0
+  };
+
+  var junkData = {
+    labels: junkNames,
+    datasets: [junkVotes, junkShows]
+  };
+
+  var chartOptions = {
+    responsive: false,
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        },
+      }]
+    }
+  };
+
+  var junkChart = new Chart(context, {
+    type: 'bar',
+    data: junkData,
+    options: chartOptions
+  });
+  document.getElementById('results-chart').style.backgroundColor = 'white';
 }
 
 sectionEl.addEventListener('click', handleClicks);
 
-//render 3 images on page load
 getUserName();
 randomJunk();
