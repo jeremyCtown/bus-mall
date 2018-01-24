@@ -31,19 +31,26 @@ body h2{
 
 body img {
   height: 200px;
+  max-width: 20%;
   margin: 35px 50px 35px 70px;
 }
 
 body ul {
-  width: 90%;
   font-size: 20px;
   color: rgb(38, 57, 119);
   padding: 20px;
-  text-align: center;
+  margin: 25px 0;
+  text-align: left;
 }
 
 body li {
   font-size: 18px;
   color: rgb(51, 51, 51);
   line-height: 20px;
+  padding: 0 0 0 20px;
+}
+
+canvas {
+  position: relative;
+
 }

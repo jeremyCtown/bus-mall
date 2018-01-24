@@ -11,31 +11,27 @@ function getUserName() {
   }
 }
 
-// array to store all Junk instances
 Junk.allJunk = [];
-
-//keep track of all clicks
 Junk.totalClicks = 0;
-
-//track previously displayed junk
 Junk.lastShown = [];
 
-//access the section element from the DOM
 var sectionEl = document.getElementById('junk-pics');
-
-//access ul element from DOM
 var ulEl = document.getElementById('junk-results');
 
-// make a constructor for Junk objects
+//arrays to store chart elements
+var junkNames = [];
+var junkClicks = [];
+var junkViews = [];
+
 function Junk(filepath, name) {
   this.filepath = filepath;
   this.name = name;
   this.shows = 0;
   this.clicks = 0;
   Junk.allJunk.push(this);
+  junkNames.push(this.name);
 }
 
-// create instances of Junk
 new Junk('images/bag.jpg', 'bag');
 new Junk('images/banana.jpg', 'banana');
 new Junk('images/bathroom.jpg', 'bathroom');
@@ -57,12 +53,10 @@ new Junk('images/usb.gif', 'usb');
 new Junk('images/water-can.jpg', 'water-can');
 new Junk('images/wine-glass.jpg', 'wine-glass');
 
-//assign elements to IDs
 var leftEl = document.getElementById('left');
 var centerEl = document.getElementById('center');
 var rightEl = document.getElementById('right');
 
-//randomly display a picture
 function randomJunk() {
   var randomLeft = Math.floor(Math.random() * Junk.allJunk.length);
   var randomCenter = Math.floor(Math.random() * Junk.allJunk.length);
@@ -93,7 +87,6 @@ function randomJunk() {
   Junk.lastShown[2] = randomRight;
 }
 
-// define handleClicks function
 function handleClicks(e) {
   Junk.totalClicks++;
   console.log(e.target.alt);
@@ -103,16 +96,18 @@ function handleClicks(e) {
       Junk.allJunk[i].clicks++;
     }
   }
-  if(Junk.totalClicks > 24) {
+  if(Junk.totalClicks > 5) {
     sectionEl.removeEventListener('click', handleClicks);
     alert('Thanks for your help, ' + userName + '! Click Ok to see your results');
     showResults();
+    updateClicks();
+    updateShows();
+    createChart();
   } else {
     randomJunk();
   }
 }
 
-//display results
 function showResults() {
   ulEl.textContent = userName + '\'s Results';
   for (var i in Junk.allJunk) {
@@ -122,8 +117,59 @@ function showResults() {
   }
 }
 
+function updateClicks () {
+  for(var i in Junk.allJunk) {
+    junkClicks[i] = Junk.allJunk[i].clicks;
+  }
+}
+
+function updateShows () {
+  for(var i in Junk.allJunk) {
+    junkViews[i] = Junk.allJunk[i].shows;
+  }
+}
+
+function createChart () {
+  var context = document.getElementById('results-chart').getContext('2d');
+ 
+  var junkVotes = {
+    label: 'Clicks per Item',
+    data: junkClicks,
+    backgroundColor: 'rgba(0, 99, 132, 0.6)',
+    borderWidth: 0
+  };
+
+  var junkShows = {
+    label: 'Views per Item',
+    data: junkViews,
+    backgroundColor: 'rgba(99, 132, 0, 0.6)',
+    borderWidth: 0
+  };
+
+  var junkData = {
+    labels: junkNames,
+    datasets: [junkVotes, junkShows]
+  };
+
+  var chartOptions = {
+    responsive: false,
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        },
+      }]
+    }
+  };
+
+  var junkChart = new Chart(context, {
+    type: 'bar',
+    data: junkData,
+    options: chartOptions
+  });
+}
+
 sectionEl.addEventListener('click', handleClicks);
 
-//render 3 images on page load
 getUserName();
 randomJunk();
