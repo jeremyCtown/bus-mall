@@ -1,7 +1,49 @@
 body{
-  max-width: 900px;
+  max-width: 90%;
+  background-color: rgb(79, 146, 201);
+}
+
+body h1 {
+  font-size: 30px;
+  width: 90%;
+  font-family: 'Josefin Sans', sans-serif;
+  text-align: center;
+  padding: 20px;
+  margin: 20px;
+  color: white;
+}
+
+body h2{
+  font-size: 20px;
+  width: 90%;
+  text-align: center;
+  padding: 20px;
+  margin: 20px;
+  color: white;
+}
+
+#junk-pics {
+  width: 90%;
+  margin: auto;
+  background-color: white;
+  border: 8px solid rgb(22, 208, 214);
 }
 
 body img {
-  width: 200px;
+  height: 200px;
+  margin: 35px 50px 35px 70px;
+}
+
+body ul {
+  width: 90%;
+  font-size: 20px;
+  color: rgb(38, 57, 119);
+  padding: 20px;
+  text-align: center;
+}
+
+body li {
+  font-size: 18px;
+  color: rgb(51, 51, 51);
+  line-height: 20px;
 }
