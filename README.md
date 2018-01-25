@@ -16,6 +16,9 @@ Day 1 really sucked, and did not make much headway towards achieving the goals. 
 ### Day 2
 Day 2 went much better, and the site is now a fully functioning MVP. Results are recorded and displayed in a table and in a bar graph, with images being removed from the page once results are available. Attempts to move results to a second page did not work.
 
+## Day 3
+Day 3 was the first time I think I actually sat down and sketched out what I needed to accomplish. This made work go by very quickly, and I was able to stretch my legs a little bit by adding a skip button that turns to a refresh button after 25 clicks. I had to get rid of my table for now, and want to figure out how to hide the chart between iterations but otherwise everything went well.
+
 ## Resources
 
 Table with multiple datasets: https://codepen.io/Shokeen/pen/NpgbKg

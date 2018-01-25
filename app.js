@@ -1,13 +1,19 @@
 'use strict';
 
 //creates the prompt when the user initially visits the page
-var userName = 0;
+var userName;
 function getUserName() {
-  userName = prompt('Thank you for participating in our study! Please enter your name');
-  console.log(userName);
-  if(userName === '') {
-    userName = 'AAAHHHH!!!!!';
-    console.log('NO NAME GIVEN');
+  if(localStorage.userName) {
+    alert('Thanks for coming back ' + localStorage.userName + '! Let\'s get started.');
+    userName = localStorage.userName;
+  } else {
+    userName = prompt('Thank you for participating in our study! Please enter your name');
+    console.log(userName);
+    if(userName === '') {
+      userName = 'AAAHHHH!!!!!';
+      console.log('NO NAME GIVEN');
+    }
+    alert('Alright ' + userName + ', let\'s get started!');
   }
 }
 
@@ -18,12 +24,15 @@ Junk.lastShown = [];
 
 //retrieves elements from the main document(index.html)
 var sectionEl = document.getElementById('junk-pics');
+var buttonEl = document.getElementById('button');
 var junkResults = document.getElementById('junk-results');
 
-//arrays to store chart variables
+//arrays to store chart variables and update localStorage
 var junkNames = [];
 var junkClicks = [];
 var junkViews = [];
+var skipCounter = 0;
+
 
 // constructor function
 function Junk(filepath, name) {
@@ -34,28 +43,6 @@ function Junk(filepath, name) {
   Junk.allJunk.push(this);
   junkNames.push(this.name);
 }
-
-//object instances of the constructor
-new Junk('images/bag.jpg', 'bag');
-new Junk('images/banana.jpg', 'banana');
-new Junk('images/bathroom.jpg', 'bathroom');
-new Junk('images/boots.jpg', 'boots');
-new Junk('images/breakfast.jpg', 'breakfast');
-new Junk('images/bubblegum.jpg', 'bubblegum');
-new Junk('images/chair.jpg', 'chair');
-new Junk('images/cthulhu.jpg', 'cthulhu');
-new Junk('images/dog-duck.jpg', 'dog-duck');
-new Junk('images/dragon.jpg', 'dragon');
-new Junk('images/pen.jpg', 'pen');
-new Junk('images/pet-sweep.jpg', 'pet-sweep');
-new Junk('images/scissors.jpg', 'scissors');
-new Junk('images/shark.jpg', 'shark');
-new Junk('images/sweep.png', 'sweep');
-new Junk('images/tauntaun.jpg', 'tauntaun');
-new Junk('images/unicorn.jpg', 'unicorn');
-new Junk('images/usb.gif', 'usb');
-new Junk('images/water-can.jpg', 'water-can');
-new Junk('images/wine-glass.jpg', 'wine-glass');
 
 //assigns variables to image elements from the main page (index.html)
 var leftEl = document.getElementById('left');
@@ -116,66 +103,65 @@ function handleClicks(e) {
     sectionEl.removeEventListener('click', handleClicks);
     removePhotos();
     alert('Thanks for your help, ' + userName + '! Click Ok to see your results');
+    refreshButton();
     updateClicks();
     updateShows();
-    showResults();
+    storeUserData();
     createChart();
+    Junk.totalClicks = 0;
   } else {
     randomJunk();
   }
 }
 
-// removes 3 images after 25 clicks
+//event listener to recognize validated clicks on images
+sectionEl.addEventListener('click', handleClicks);
+
+//hides 3 images after 25 clicks
 function removePhotos() {
-  leftEl.src = null;
+  leftEl.src = '';
   leftEl.alt = '';
-  centerEl.src = null;
+  centerEl.src = '';
   centerEl.alt = '';
-  rightEl.src = null;
+  rightEl.src = '';
   rightEl.alt = '';
 }
 
-//renders a table with survey results in addition to the chart
-function showResults() {
-  var h2El = document.getElementById("table-header");
-  h2El.textContent = userName + '\'s Results';
+//switches skipButton to refreshButton
+function refreshButton() {
+  buttonEl.textContent = 'Let\'s do it again!';
+  buttonEl.style.backgroundColor = 'green';
+  buttonEl.addEventListener('click', clickRefreshButton);
+}
 
-  var trEl = document.createElement('tr');
-  var thEl = document.createElement('th');
-  thEl.textContent = 'Item';
-  trEl.appendChild(thEl);
+//refreshButton functionality
+function clickRefreshButton() {
+  buttonEl.removeEventListener('click', refreshButton);
+  randomJunk();
+  sectionEl.addEventListener('click', handleClicks);
+  skipButton();
+}
 
-  for (var i in Junk.allJunk) {
-    thEl = document.createElement('th');
-    thEl.textContent = Junk.allJunk[i].name;
-    trEl.appendChild(thEl);
-  }
+//creates skip button option
+function skipButton() {
+  buttonEl.addEventListener('click', clickSkipButton);
+  buttonEl.textContent = 'These suck. Skip \'em!';
+  buttonEl.style.backgroundColor = 'rgb(135, 161, 182);';
+}
 
-  junkResults.appendChild(trEl);
+//skipButton functionality
+function clickSkipButton() {
+  skipCounter++;
+  randomJunk();
+  console.log('SKIPPED! Skip Count =' + skipCounter + '. Item #s skipped: ' + Junk.lastShown);
+}
 
-  trEl = document.createElement('tr');
-  var tdEl = document.createElement('td');
-  tdEl.textContent = 'Views';
-  trEl.appendChild(tdEl);
-  for (i in Junk.allJunk) {
-    tdEl = document.createElement('td');
-    tdEl.textContent = Junk.allJunk[i].shows;
-    trEl.appendChild(tdEl);
-  }
-
-  junkResults.appendChild(trEl);
-
-  trEl = document.createElement('tr');
-  tdEl = document.createElement('td');
-  tdEl.textContent = 'Clicks';
-  trEl.appendChild(tdEl);
-  for (i in Junk.allJunk) {
-    tdEl = document.createElement('td');
-    tdEl.textContent = Junk.allJunk[i].clicks;
-    trEl.appendChild(tdEl);
-  }
-
-  junkResults.appendChild(trEl);
+//stores user data AFTER survey complete
+function storeUserData() {
+  localStorage.userName = userName;
+  localStorage.itemNames = junkNames;
+  localStorage.chartClicks = junkClicks;
+  localStorage.chartViews = junkViews;
 }
 
 // adds to total number of clicks per item
@@ -194,6 +180,9 @@ function updateShows () {
 
 //renders a chart that is displayed after 25 clicks, uses library 'chartJS'
 function createChart () {
+  var h2El = document.getElementById('table-header');
+  h2El.textContent = userName + '\'s Results';
+
   var context = document.getElementById('results-chart').getContext('2d');
 
   var junkVotes = {
@@ -226,8 +215,7 @@ function createChart () {
     }
   };
 
-  //linter errors exist because referencing 'chartJS' library
-  var junkChart = new Chart(context, {
+  var junkChart = new Chart(context, { //eslint-disable-line
     type: 'bar',
     data: junkData,
     options: chartOptions
@@ -235,9 +223,75 @@ function createChart () {
   document.getElementById('results-chart').style.backgroundColor = 'white';
 }
 
-//event listener to recognize validated clicks on images
-sectionEl.addEventListener('click', handleClicks);
+// 
+
+//object instances of the constructor
+new Junk('images/bag.jpg', 'bag');
+new Junk('images/banana.jpg', 'banana');
+new Junk('images/bathroom.jpg', 'bathroom');
+new Junk('images/boots.jpg', 'boots');
+new Junk('images/breakfast.jpg', 'breakfast');
+new Junk('images/bubblegum.jpg', 'bubblegum');
+new Junk('images/chair.jpg', 'chair');
+new Junk('images/cthulhu.jpg', 'cthulhu');
+new Junk('images/dog-duck.jpg', 'dog-duck');
+new Junk('images/dragon.jpg', 'dragon');
+new Junk('images/pen.jpg', 'pen');
+new Junk('images/pet-sweep.jpg', 'pet-sweep');
+new Junk('images/scissors.jpg', 'scissors');
+new Junk('images/shark.jpg', 'shark');
+new Junk('images/sweep.png', 'sweep');
+new Junk('images/tauntaun.jpg', 'tauntaun');
+new Junk('images/unicorn.jpg', 'unicorn');
+new Junk('images/usb.gif', 'usb');
+new Junk('images/water-can.jpg', 'water-can');
+new Junk('images/wine-glass.jpg', 'wine-glass');
 
 //renders name prompt and initial 3 images on page load
 getUserName();
+skipButton();
 randomJunk();
+
+
+//SAVE FOR LATER
+
+// renders a table with survey results in addition to the chart
+// function showResults() {
+
+//   var trEl = document.createElement('tr');
+//   var thEl = document.createElement('th');
+//   thEl.textContent = 'Item';
+//   trEl.appendChild(thEl);
+
+//   for (var i in Junk.allJunk) {
+//     thEl = document.createElement('th');
+//     thEl.textContent = localStorage.itemNames[i];
+//     trEl.appendChild(thEl);
+//   }
+
+//   junkResults.appendChild(trEl);
+
+//   trEl = document.createElement('tr');
+//   var tdEl = document.createElement('td');
+//   tdEl.textContent = 'Views';
+//   trEl.appendChild(tdEl);
+//   for (i in Junk.allJunk) {
+//     tdEl = document.createElement('td');
+//     tdEl.textContent = localStorage.chartViews[i];
+//     trEl.appendChild(tdEl);
+//   }
+
+//   junkResults.appendChild(trEl);
+
+//   trEl = document.createElement('tr');
+//   tdEl = document.createElement('td');
+//   tdEl.textContent = 'Clicks';
+//   trEl.appendChild(tdEl);
+//   for (i in Junk.allJunk) {
+//     tdEl = document.createElement('td');
+//     tdEl.textContent = localStorage.chartClicks[i];
+//     trEl.appendChild(tdEl);
+//   }
+
+//   junkResults.appendChild(trEl);
+// }

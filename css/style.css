@@ -9,34 +9,46 @@ div{
 
 div h1 {
   font-size: 30px;
-  width: 90%;
+  width: 100%;
   font-family: 'Josefin Sans', sans-serif;
   text-align: center;
-  padding: 20px;
-  margin: 20px;
+  margin: 20px 0;
   color: white;
 }
 
 div h2{
   font-size: 20px;
-  width: 90%;
+  width: 100%;
   text-align: center;
-  padding: 20px;
-  margin: 20px;
+  margin: 30px 0 30px;
   color: white;
 }
 
 #junk-pics {
-  width: 90%;
+  width: 95%;
+  height: 270px;
   margin: auto;
   background-color: white;
   border: 8px solid rgb(22, 208, 214);
 }
 
-div img {
-  height: 200px;
-  max-width: 20%;
-  margin: 35px 50px 35px 70px;
+#junk-pics img {
+  max-height: 175px;
+  width: 18%;
+  margin-top: 45px;
+  margin-bottom: 35px;
+}
+
+#left {
+  margin-left: 11.5%;
+}
+
+#center {
+  margin-left: 11.5%;
+}
+
+#right {
+  margin-left: 11.5%;
 }
 
 #table-header {
@@ -47,6 +59,34 @@ div img {
   margin: auto;
   color:  rgb(171, 230, 222);
 }
+
+div canvas {
+  margin: 25px auto;
+}
+
+#divTwo {
+  text-align: center;
+}
+
+div button {
+  background-color:rgb(135, 161, 182);
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 16px;
+  width: 18%;
+  min-width: 200px;
+  margin-top: 20px;
+  font-weight:bold;
+  color: white;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+div button:hover {
+  color: black;
+  box-shadow: none;
+}
+
+
 
 div table {
   width: 90%;
@@ -75,8 +115,4 @@ div td {
   text-align: center;
   border:1px solid black;
   background-color: white;
-}
-
-div canvas {
-  margin: 25px auto;
 }
