@@ -106,8 +106,8 @@ function handleClicks(e) {
     refreshButton();
     updateClicks();
     updateShows();
-    createChart();
     storeUserData();
+    createChart();
     Junk.totalClicks = 0;
   } else {
     randomJunk();
@@ -146,7 +146,7 @@ function clickRefreshButton() {
 function skipButton() {
   buttonEl.addEventListener('click', clickSkipButton);
   buttonEl.textContent = 'These suck. Skip \'em!';
-  buttonEl.style.backgroundColor = 'red';
+  buttonEl.style.backgroundColor = 'rgb(135, 161, 182);';
 }
 
 //skipButton functionality
@@ -159,6 +159,7 @@ function clickSkipButton() {
 //stores user data AFTER survey complete
 function storeUserData() {
   localStorage.userName = userName;
+  localStorage.itemNames = junkNames;
   localStorage.chartClicks = junkClicks;
   localStorage.chartViews = junkViews;
 }
@@ -222,6 +223,8 @@ function createChart () {
   document.getElementById('results-chart').style.backgroundColor = 'white';
 }
 
+// 
+
 //object instances of the constructor
 new Junk('images/bag.jpg', 'bag');
 new Junk('images/banana.jpg', 'banana');
@@ -250,9 +253,7 @@ skipButton();
 randomJunk();
 
 
-
-// SAVING THIS TABLE FOR LATER!!!!
-
+//SAVE FOR LATER
 
 // renders a table with survey results in addition to the chart
 // function showResults() {
@@ -264,7 +265,7 @@ randomJunk();
 
 //   for (var i in Junk.allJunk) {
 //     thEl = document.createElement('th');
-//     thEl.textContent = Junk.allJunk[i].name;
+//     thEl.textContent = localStorage.itemNames[i];
 //     trEl.appendChild(thEl);
 //   }
 
@@ -276,7 +277,7 @@ randomJunk();
 //   trEl.appendChild(tdEl);
 //   for (i in Junk.allJunk) {
 //     tdEl = document.createElement('td');
-//     tdEl.textContent = junkViews[i];
+//     tdEl.textContent = localStorage.chartViews[i];
 //     trEl.appendChild(tdEl);
 //   }
 
@@ -288,7 +289,7 @@ randomJunk();
 //   trEl.appendChild(tdEl);
 //   for (i in Junk.allJunk) {
 //     tdEl = document.createElement('td');
-//     tdEl.textContent = junkClicks[i];
+//     tdEl.textContent = localStorage.chartClicks[i];
 //     trEl.appendChild(tdEl);
 //   }
 
