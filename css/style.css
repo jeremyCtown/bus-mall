@@ -48,6 +48,27 @@ div img {
   color:  rgb(171, 230, 222);
 }
 
+div canvas {
+  margin: 25px auto;
+}
+
+div button {
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 18px;
+  font-weight:bold;
+  color: white;
+  margin: 20px 0px 20px 42%;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+div button:hover {
+  color: black;
+  box-shadow: none;
+}
+
+
+
 div table {
   width: 90%;
   font-size: 20px;
@@ -75,8 +96,4 @@ div td {
   text-align: center;
   border:1px solid black;
   background-color: white;
-}
-
-div canvas {
-  margin: 25px auto;
 }
