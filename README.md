@@ -19,6 +19,9 @@ Day 2 went much better, and the site is now a fully functioning MVP. Results are
 ## Day 3
 Day 3 was the first time I think I actually sat down and sketched out what I needed to accomplish. This made work go by very quickly, and I was able to stretch my legs a little bit by adding a skip button that turns to a refresh button after 25 clicks. I had to get rid of my table for now, and want to figure out how to hide the chart between iterations but otherwise everything went well.
 
+## Final Edits
+LocalStorage became a much bigger headache than anticipated but the site is fully functioning now. Chart disappears on page refresh, keeping it from being a distraction to users. Still want to parse out "Items skipped" and show that on the chart but sleep tonight is more important since we're hopping in to project week. Will revisit this during break from class.
+
 ## Resources
 
 Table with multiple datasets: https://codepen.io/Shokeen/pen/NpgbKg
